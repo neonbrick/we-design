@@ -6,17 +6,15 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
+  group: pages-branch-deploy
   cancel-in-progress: false
 
 jobs:
-  build:
-    name: Build static site
+  deploy:
+    name: Build and publish to gh-pages branch
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,35 +24,20 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Configure Pages
-        id: pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
       - name: Install dependencies
         run: npm ci
 
       - name: Build
         env:
-          VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          VITE_BASE_PATH: /${{ github.event.repository.name }}/
         run: npm run build
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Publish to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: dist
-
-  deploy:
-    name: Deploy to GitHub Pages
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
-        with:
-          timeout: 1200000
-          error_count: 50
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          commit_message: "deploy: ${{ github.sha }}"

@@ -76,19 +76,30 @@ pull request to `main`. See `.github/workflows/ci.yml`.
 ## Deploy
 
 Production deploys are automatic on push to `main` via
-`.github/workflows/deploy.yml` and land on **GitHub Pages**.
+`.github/workflows/deploy.yml`. The workflow builds the site and publishes
+the `dist/` output to the **`gh-pages`** branch using
+[`peaceiris/actions-gh-pages`](https://github.com/peaceiris/actions-gh-pages);
+**GitHub Pages** then serves that branch.
+
+We use this branch-based path (rather than the newer
+`actions/deploy-pages` Pages-deployments pipeline) because it is the
+simplest fully-free option that doesn't get wedged on first-time
+provisioning. The deploy job uses only `GITHUB_TOKEN` — no extra secrets.
 
 One-time setup (first push only):
 
 1. Push the repo to GitHub.
-2. In the repo settings → **Pages**, set **Source** to **GitHub Actions**.
+2. In the repo settings → **Pages**, set **Source** to **Deploy from a
+   branch** and pick **`gh-pages`** / `/ (root)`.
+   (Already configured for `neonbrick/we-design`.)
 3. Push to `main` (or use **Run workflow** on the _Deploy to GitHub Pages_
    action).
 
 The workflow sets `VITE_BASE_PATH=/<repo-name>/` so asset URLs resolve
-correctly under the Pages subpath. If we move the deploy target later (custom
-domain, Cloudflare Pages, Netlify, Fly, etc.), update `vite.config.ts` and the
-`deploy.yml` workflow — no app code changes required.
+correctly under the Pages subpath. If we move the deploy target later
+(custom domain, Cloudflare Pages, Netlify, Fly, etc.), update
+`vite.config.ts` and the `deploy.yml` workflow — no app code changes
+required.
 
 Manual deploy:
 
@@ -97,8 +108,9 @@ Manual deploy:
 gh workflow run "Deploy to GitHub Pages"
 ```
 
-Live URL: published by the _Deploy to GitHub Pages_ job — see the
-[deploy workflow runs](https://github.com/neonbrick/we-design/actions/workflows/deploy.yml).
+Live URL: <https://neonbrick.github.io/we-design/> — published by the
+_Deploy to GitHub Pages_ job (see the
+[deploy workflow runs](https://github.com/neonbrick/we-design/actions/workflows/deploy.yml)).
 
 ## Roadmap pointers
 

@@ -3,11 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "description": "We design — placeholder app while product scope (WED-2) lands.",
+  "description": "We design — AI-generated one-page websites for small businesses.",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "preview": "vite preview --port 4173",
+    "generate": "tsx scripts/generate-copy.ts",
+    "build": "tsc --noEmit && tsx scripts/build-site.ts",
+    "preview": "python3 -m http.server --directory dist 4173",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -23,9 +23,9 @@
     "globals": "^15.14.0",
     "jsdom": "^26.0.0",
     "prettier": "^3.4.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0",
-    "vite": "^6.0.7",
     "vitest": "^2.1.8"
   }
 }

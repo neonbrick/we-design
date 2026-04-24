@@ -1,0 +1,63 @@
+{
+  "slug": "rivera-mobile-auto-repair",
+  "name": "Rivera Mobile Auto Repair",
+  "category": "Mobile auto mechanic",
+  "tagline": "Mobile auto repair serving Salinas, Prunedale, and North Monterey County.",
+  "owner": {
+    "firstName": "Marco",
+    "lastName": "Rivera",
+    "yearsExperience": 18
+  },
+  "contact": {
+    "phone": "(831) 555-0142",
+    "email": "marco@riveramobileauto.example",
+    "bookingUrl": null
+  },
+  "address": {
+    "line1": "Serves Salinas and 25-mile radius",
+    "city": "Salinas",
+    "region": "CA",
+    "postalCode": "93901",
+    "country": "US",
+    "serviceArea": ["Salinas", "Prunedale", "Marina", "Castroville", "Gonzales"]
+  },
+  "hours": [
+    { "day": "Mon", "open": "07:00", "close": "18:00" },
+    { "day": "Tue", "open": "07:00", "close": "18:00" },
+    { "day": "Wed", "open": "07:00", "close": "18:00" },
+    { "day": "Thu", "open": "07:00", "close": "18:00" },
+    { "day": "Fri", "open": "07:00", "close": "18:00" },
+    { "day": "Sat", "open": "08:00", "close": "14:00" },
+    { "day": "Sun", "open": null, "close": null }
+  ],
+  "services": [
+    "On-site diagnostics & check-engine codes",
+    "Brake pads, rotors, and fluid service",
+    "Battery test and replacement",
+    "Oil changes and general maintenance",
+    "Starter / alternator replacement",
+    "Pre-purchase used-car inspections"
+  ],
+  "highlights": [
+    "No tow needed — work done in your driveway or parking lot",
+    "Most jobs same-day when booked before noon",
+    "18 years ASE-style experience; former dealership tech",
+    "Flat-rate quotes given before any work starts"
+  ],
+  "reviews": {
+    "rating": 4.8,
+    "count": 47,
+    "snippets": [
+      "Marco came out to my apartment and swapped my alternator in under two hours. Saved me a tow.",
+      "Straightforward, honest pricing. Texted me the diagnostic codes before quoting.",
+      "Showed up on time and cleaned up after. Will call him for every car issue from now on."
+    ]
+  },
+  "ingested": {
+    "source": "google_business_profile",
+    "sourceUrl": null,
+    "ingestedAt": "2026-04-24",
+    "hasWebsite": false,
+    "notes": "Hand-pasted plausible listing for the first vertical slice. Swap by editing this file and running `npm run generate`."
+  }
+}

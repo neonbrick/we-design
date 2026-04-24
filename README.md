@@ -1,47 +1,89 @@
 # We design
 
-Foundation repo for the **We design** company. This is the placeholder app
-that lets us prove out the dev loop, CI, and deploy path before product scope
-locks. Real product code lands once
-[WED-2](../../WED/issues/WED-2) clarifies what we're building and
-[WED-4](../../WED/issues/WED-4) ships the first vertical slice.
+AI-generated one-page websites for small businesses who have a Google listing
+but no website. We pitch the site to them at a flat **$499**. This repo is
+the generation + deploy pipeline.
+
+> First vertical slice lives at
+> <https://neonbrick.github.io/we-design/> — one real listing,
+> one AI-generated page, one mock $499 checkout.
+
+## Pipeline
+
+```
+data/listings/<slug>.json             (raw listing — edit to swap businesses)
+      │
+      ▼  npm run generate              (LLM writes copy, local only)
+data/listings/<slug>.generated.json    (listing + generated copy, committed)
+      │
+      ▼  npm run build                 (deterministic render, no network)
+dist/index.html                        (published to gh-pages → GitHub Pages)
+```
+
+The JSON seam keeps three concerns independent: ingestion, copy generation,
+and rendering. Swapping ingestion sources or the LLM provider doesn't touch
+the renderer.
 
 ## Stack
 
-- **Vite + TypeScript (vanilla)** — no framework lock-in yet.
-- **Vitest** for unit tests.
-- **ESLint (flat config) + Prettier** for lint/format.
+- **TypeScript** (strict, `verbatimModuleSyntax`).
+- **tsx** runs the build + generate scripts directly from TS, no bundler.
+- **Vitest** for renderer + utility tests.
+- **Local Ollama** (`qwen2.5:14b` by default) for copy generation — free, no
+  API key needed, easy to swap for a hosted model later.
 - **GitHub Actions** for CI (lint, format check, typecheck, test, build).
-- **GitHub Pages** as the placeholder deploy target ($0/month).
+- **GitHub Pages** for hosting the generated static site.
 
-Choices are intentionally cheap and reversible. Swap React/Svelte/Solid in by
-adding the plugin later; swap Pages for Cloudflare/Netlify by changing the
-deploy workflow.
+All choices are cheap and reversible. Adding React/Svelte or swapping to
+Cloudflare Pages / Netlify / Fly is a contained change.
 
 ## Requirements
 
-- **Node 22.x** (see `.nvmrc`). Anything 20+ should work, but CI pins to
-  `.nvmrc`.
-- **npm 10+** (ships with Node 22).
-- **git**, plus **gh** if you want to use the GitHub repo flow.
+- **Node 22.x** (see `.nvmrc`). npm 10+.
+- **git**, plus **gh** for the GitHub flow.
+- **Ollama** running locally if you want to regenerate copy
+  (<https://ollama.com>). Pull a model: `ollama pull qwen2.5:14b`.
 
 ## Fresh-clone quickstart
 
 ```sh
 git clone https://github.com/neonbrick/we-design.git
 cd we-design
-nvm use            # optional, picks up .nvmrc
+nvm use                # optional, picks up .nvmrc
 npm install
-npm run dev        # http://localhost:5173
+npm run build          # builds dist/index.html from committed generated JSON
+npm run preview        # serves dist/ at http://localhost:4173
 ```
 
-Target: clone → running app in well under 15 minutes.
+Target: clone → deployed-quality page rendered locally in under 15 minutes.
+
+## Regenerating the site copy
+
+The committed `*.generated.json` files are the canonical output of the LLM
+step; CI never calls the LLM. To refresh copy (or swap in a different
+business), edit the raw listing JSON and re-run `npm run generate`:
+
+```sh
+# Edit data/listings/default.json with the new listing.
+OLLAMA_MODEL=qwen2.5:14b npm run generate
+npm run build
+git diff data/listings/default.generated.json dist/index.html
+```
+
+Configuration via env vars (all optional):
+
+| Var            | Default                  | Purpose                |
+| -------------- | ------------------------ | ---------------------- |
+| `OLLAMA_URL`   | `http://localhost:11434` | Ollama daemon base URL |
+| `OLLAMA_MODEL` | `qwen2.5:14b`            | Chat model to use      |
 
 ## Daily commands
 
 | Task           | Command                |
 | -------------- | ---------------------- |
-| Dev server     | `npm run dev`          |
+| Generate copy  | `npm run generate`     |
+| Build site     | `npm run build`        |
+| Preview build  | `npm run preview`      |
 | Unit tests     | `npm run test`         |
 | Test (watch)   | `npm run test:watch`   |
 | Lint           | `npm run lint`         |
@@ -49,72 +91,68 @@ Target: clone → running app in well under 15 minutes.
 | Format         | `npm run format`       |
 | Format check   | `npm run format:check` |
 | Typecheck      | `npm run typecheck`    |
-| Build          | `npm run build`        |
-| Preview build  | `npm run preview`      |
 
-CI runs `lint`, `format:check`, `typecheck`, `test`, `build` on every push and
-pull request to `main`. See `.github/workflows/ci.yml`.
+CI runs `lint`, `format:check`, `typecheck`, `test`, `build` on every push
+and pull request to `main`. See `.github/workflows/ci.yml`.
 
 ## Layout
 
 ```
 .
-├── index.html              # Vite entry
+├── data/
+│   └── listings/
+│       ├── default.json               # raw listing (input)
+│       └── default.generated.json     # listing + AI-generated copy
+├── scripts/
+│   ├── generate-copy.ts               # LLM call, local only
+│   └── build-site.ts                  # deterministic render → dist/
 ├── src/
-│   ├── main.ts             # App bootstrap
-│   ├── greet.ts            # Sample module (placeholder)
-│   └── greet.test.ts       # Sample Vitest test
-├── eslint.config.js        # ESLint flat config
-├── vite.config.ts          # Vite build config
-├── vitest.config.ts        # Vitest test config
-├── tsconfig.json           # Strict TS config
-└── .github/workflows/
-    ├── ci.yml              # Lint + typecheck + test + build
-    └── deploy.yml          # Build + publish to GitHub Pages
+│   ├── listing.ts                     # shared types + loaders
+│   ├── renderSite.ts                  # pure (listing, copy) → HTML
+│   └── renderSite.test.ts             # Vitest coverage
+├── .github/workflows/
+│   ├── ci.yml                         # lint + typecheck + test + build
+│   └── deploy.yml                     # build + publish to gh-pages
+├── eslint.config.js
+├── vitest.config.ts
+├── tsconfig.json
+└── package.json
 ```
 
 ## Deploy
 
-Production deploys are automatic on push to `main` via
+Production deploys happen automatically on push to `main` via
 `.github/workflows/deploy.yml`. The workflow builds the site and publishes
-the `dist/` output to the **`gh-pages`** branch using
+`dist/` to the **`gh-pages`** branch using
 [`peaceiris/actions-gh-pages`](https://github.com/peaceiris/actions-gh-pages);
-**GitHub Pages** then serves that branch.
+**GitHub Pages** then serves that branch. No secrets beyond `GITHUB_TOKEN`.
 
-We use this branch-based path (rather than the newer
-`actions/deploy-pages` Pages-deployments pipeline) because it is the
-simplest fully-free option that doesn't get wedged on first-time
-provisioning. The deploy job uses only `GITHUB_TOKEN` — no extra secrets.
-
-One-time setup (first push only):
+One-time setup (already configured for `neonbrick/we-design`):
 
 1. Push the repo to GitHub.
 2. In the repo settings → **Pages**, set **Source** to **Deploy from a
    branch** and pick **`gh-pages`** / `/ (root)`.
-   (Already configured for `neonbrick/we-design`.)
 3. Push to `main` (or use **Run workflow** on the _Deploy to GitHub Pages_
    action).
-
-The workflow sets `VITE_BASE_PATH=/<repo-name>/` so asset URLs resolve
-correctly under the Pages subpath. If we move the deploy target later
-(custom domain, Cloudflare Pages, Netlify, Fly, etc.), update
-`vite.config.ts` and the `deploy.yml` workflow — no app code changes
-required.
 
 Manual deploy:
 
 ```sh
-# Trigger the deploy workflow without pushing a commit:
 gh workflow run "Deploy to GitHub Pages"
 ```
 
-Live URL: <https://neonbrick.github.io/we-design/> — published by the
-_Deploy to GitHub Pages_ job (see the
-[deploy workflow runs](https://github.com/neonbrick/we-design/actions/workflows/deploy.yml)).
+Live URL: <https://neonbrick.github.io/we-design/>.
 
 ## Roadmap pointers
 
-- Foundation: [WED-3](../../WED/issues/WED-3) (this repo).
-- Product scope: [WED-2](../../WED/issues/WED-2) (CEO, in progress).
-- First vertical slice: [WED-4](../../WED/issues/WED-4) (CTO, blocked on
-  WED-2 + WED-3).
+- First vertical slice: [WED-4](../../WED/issues/WED-4).
+- Product scope (locked): [WED-2](../../WED/issues/WED-2#document-scope).
+- Repo foundation: [WED-3](../../WED/issues/WED-3).
+
+## Follow-up slices (not in this one)
+
+- Real Google Places / SerpAPI ingestion + "has a website?" filter.
+- Swap Ollama for a hosted model once board spend is approved; the JSON
+  seam means the renderer does not change.
+- Stripe Checkout wired to the CTA button.
+- Outbound email template that links to a generated preview.

@@ -1,13 +1,280 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>We design</title>
-    <link rel="icon" href="data:," />
-    <script type="module" crossorigin src="/we-design/assets/index-GuzGyerc.js"></script>
-  </head>
-  <body>
-    <main id="app"></main>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rivera Mobile Auto Repair — Mobile auto mechanic</title>
+<meta name="description" content="Marco Rivera offers on-site auto repairs for Salinas, Prunedale, Marina, Castroville, and Gonzales. Book before noon for same-day service.">
+<style>
+  :root {
+    --bg: #0f172a;
+    --bg-soft: #111827;
+    --card: #1e293b;
+    --ink: #f8fafc;
+    --muted: #cbd5e1;
+    --accent: #f97316;
+    --accent-ink: #0f172a;
+    --border: rgba(148, 163, 184, 0.2);
+    --max: 980px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  header.hero {
+    padding: 72px 24px 56px;
+    background: radial-gradient(circle at top right, rgba(249, 115, 22, 0.2), transparent 60%), var(--bg);
+    text-align: center;
+  }
+  .hero .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    margin: 0 auto 16px;
+    max-width: 22ch;
+    line-height: 1.1;
+  }
+  .hero p.subhead {
+    color: var(--muted);
+    max-width: 48ch;
+    margin: 0 auto 28px;
+    font-size: 1.125rem;
+  }
+  .hero .call-row {
+    display: inline-flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 22px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .btn-primary:hover { filter: brightness(1.05); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--border);
+  }
+  main {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 40px 24px 96px;
+    display: grid;
+    gap: 32px;
+  }
+  section.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  section h2 {
+    margin: 0 0 12px;
+    font-size: 1.35rem;
+  }
+  section p { color: var(--muted); margin: 0 0 12px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  ul.bare { list-style: none; padding: 0; margin: 0; }
+  ul.bare li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+  }
+  ul.bare li:last-child { border-bottom: 0; }
+  table.hours {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  table.hours th, table.hours td {
+    padding: 8px 0;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+    color: var(--muted);
+  }
+  table.hours th { color: var(--ink); width: 70px; }
+  table.hours tr:last-child th, table.hours tr:last-child td { border-bottom: 0; }
+  .reviews blockquote {
+    margin: 0 0 14px;
+    padding-left: 14px;
+    border-left: 3px solid var(--accent);
+    color: var(--muted);
+    font-style: italic;
+  }
+  .rating-line { color: var(--ink); font-weight: 600; margin-bottom: 14px; }
+  .rating-line .stars { color: var(--accent); letter-spacing: 2px; margin-right: 8px; }
+  .cta {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(249, 115, 22, 0.02));
+    border-color: rgba(249, 115, 22, 0.4);
+    text-align: center;
+  }
+  .cta .price {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 4px 0 6px;
+  }
+  .cta .price sup { font-size: 1rem; color: var(--muted); vertical-align: top; }
+  .cta .price-note { color: var(--muted); margin-bottom: 18px; }
+  footer {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 24px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(2, 6, 23, 0.7);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px; z-index: 50;
+  }
+  .modal-backdrop[hidden] { display: none; }
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    max-width: 440px;
+    text-align: center;
+  }
+  .modal h3 { margin: 0 0 12px; font-size: 1.25rem; }
+  .modal p { color: var(--muted); margin: 0 0 18px; }
+  @media (max-width: 520px) {
+    header.hero { padding: 48px 20px 40px; }
+    main { padding: 24px 16px 64px; gap: 20px; }
+    section.card { padding: 22px; }
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <p class="eyebrow">Mobile auto mechanic · Salinas, CA</p>
+  <h1>Rivera Mobile Auto Repair | No Tow Needed</h1>
+  <p class="subhead">Marco Rivera offers on-site auto repairs for Salinas, Prunedale, Marina, Castroville, and Gonzales. Book before noon for same-day service.</p>
+  <div class="call-row">
+    <a class="btn btn-primary" href="tel:8315550142">Call (831) 555-0142</a>
+    <a class="btn btn-ghost" href="#book">Book a visit</a>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <h2>About Rivera Mobile Auto Repair</h2>
+    <p>With 18 years of ASE-style experience as a former dealership tech, Marco Rivera provides reliable mobile auto repair services in your driveway or parking lot. Flat-rate quotes are given upfront to ensure transparency.</p>
+    <p class="rating-line"><span class="stars" aria-hidden="true">★★★★★</span>4.8 from 47 Google reviews</p>
+  </section>
+
+  <section class="card">
+    <h2>What we do</h2>
+    <p>Our services include:</p>
+    <div class="grid-2">
+      <ul class="bare">
+        <li>On-site diagnostics &amp; check-engine codes</li>
+        <li>Brake pads, rotors, and fluid service</li>
+        <li>Battery test and replacement</li>
+        <li>Oil changes and general maintenance</li>
+        <li>Starter / alternator replacement</li>
+        <li>Pre-purchase used-car inspections</li>
+      </ul>
+      <ul class="bare">
+        <li>No tow needed — work done in your driveway or parking lot</li>
+        <li>Most jobs same-day when booked before noon</li>
+        <li>18 years ASE-style experience; former dealership tech</li>
+        <li>Flat-rate quotes given before any work starts</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="grid-2">
+      <div>
+        <h2>Hours</h2>
+        <table class="hours">
+          <tbody>
+            <tr><th scope="row">Mon</th><td>07:00–18:00</td></tr><tr><th scope="row">Tue</th><td>07:00–18:00</td></tr><tr><th scope="row">Wed</th><td>07:00–18:00</td></tr><tr><th scope="row">Thu</th><td>07:00–18:00</td></tr><tr><th scope="row">Fri</th><td>07:00–18:00</td></tr><tr><th scope="row">Sat</th><td>08:00–14:00</td></tr><tr><th scope="row">Sun</th><td>Closed</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h2>Service area &amp; contact</h2>
+        <p>Serves Salinas and 25-mile radius<br>Salinas, CA 93901</p>
+        <p>Serving: Salinas, Prunedale, Marina, Castroville, Gonzales</p>
+        <p><a class="btn btn-ghost" href="tel:8315550142">(831) 555-0142</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card reviews">
+    <h2>What customers say</h2>
+    <blockquote>“Marco came out to my apartment and swapped my alternator in under two hours. Saved me a tow.”</blockquote>
+    <blockquote>“Straightforward, honest pricing. Texted me the diagnostic codes before quoting.”</blockquote>
+    <blockquote>“Showed up on time and cleaned up after. Will call him for every car issue from now on.”</blockquote>
+  </section>
+
+  <section class="card cta" id="book">
+    <h2>Build This Website for $499</h2>
+    <p class="price"><sup>$</sup>499<span style="font-size:1rem;color:var(--muted)"> flat rate</span></p>
+    <p class="price-note">We&#39;ve already built this website. Click now to secure the flat rate offer and get professional mobile auto repair services online.</p>
+    <form id="checkout-form" novalidate>
+      <button class="btn btn-primary" type="submit">Book the $499 service</button>
+    </form>
+    <p style="margin-top:14px;font-size:0.85rem;">No hidden fees — you pay only $499 for a fully functional one-page website.</p>
+  </section>
+</main>
+
+<footer>
+  <p>Rivera Mobile Auto Repair · Generated one-page site · <a href="#top" style="color:var(--accent);text-decoration:none">Back to top</a></p>
+</footer>
+
+<div id="confirm-modal" class="modal-backdrop" hidden>
+  <div class="modal" role="dialog" aria-labelledby="confirm-title" aria-modal="true">
+    <h3 id="confirm-title">Got it — we'll be in touch</h3>
+    <p>Thanks. We'll call (831) 555-0142 within one business day to confirm your $499 booking with Rivera Mobile Auto Repair.</p>
+    <button id="confirm-close" class="btn btn-primary" type="button">Close</button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var form = document.getElementById("checkout-form");
+    var modal = document.getElementById("confirm-modal");
+    var close = document.getElementById("confirm-close");
+    if (!form || !modal || !close) return;
+    form.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      modal.hidden = false;
+    });
+    close.addEventListener("click", function () { modal.hidden = true; });
+    modal.addEventListener("click", function (ev) {
+      if (ev.target === modal) modal.hidden = true;
+    });
+  })();
+</script>
+</body>
 </html>
